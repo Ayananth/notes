@@ -22,7 +22,7 @@ This keeps the application connection details stable even when the primary chang
 
 ## 2. Architecture diagram
 
-The diagram below is unchanged.
+
 
 ```mermaid
 
