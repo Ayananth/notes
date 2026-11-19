@@ -475,16 +475,3 @@ The backup-failure alert uses these Barman plugin metrics:
 
 The `cnpg_collector_last_*_backup_timestamp` gauges remain at zero for this plugin, so they are not the correct metrics for this alert.
 
-## 12. Quick operational reference
-
-| If you need to… | Use… |
-|---|---|
-| Send writes | `task-4-7-pgbouncer-rw:5432` |
-| Send reads that can tolerate replication lag | `task-4-7-pgbouncer-ro:5432` |
-| Find the current primary | Check the endpoint of `task-4-7-postgres-rw` |
-| Recover after a primary pod failure | Allow CloudNativePG to fail over; retry failed transactions and confirm the old pod rejoins as a replica |
-| Recover data deleted by an SQL statement | Restore to a new cluster using PITR and an appropriate `targetTime` |
-| Find the backup destination | `s3://task-4-7-postgres-backups-ayananth-2026/task-4-7-postgres/` |
-| Investigate a replication-lag alert | Check the replica's WAL receiver and replication lag |
-| Investigate a backup alert | Check the Barman plugin, object-storage Secret and Backup object status |
-| Investigate many apparently false alerts | Check Prometheus storage in the `monitoring` namespace |
