@@ -20,6 +20,56 @@ The application does not connect directly to individual PostgreSQL pods. It conn
 
 This keeps the application connection details stable even when the primary changes during failover.
 
+
+
+### **1. Survive a pod or node failure**
+
+- Used **CloudNativePG (CNPG)** to manage PostgreSQL on Kubernetes.
+- Deployed a 3-instance PostgreSQL cluster (1 primary + 2 replicas).
+- Enabled streaming replication between instances.
+- Configured automatic failover when the primary becomes unavailable.
+- Used Kubernetes services to automatically route traffic to the new primary.
+
+### **2. Scale reads**
+
+- Used CNPG-managed read/write (`-rw`) and read-only (`-ro`) services.
+- Routed write operations to the primary instance.
+- Routed read operations to replica instances.
+- Distributed read traffic across available replicas.
+- Separated read and write workloads to reduce primary database load.
+
+### **3. Handle connection spikes**
+
+- Implemented **PgBouncer** using the CNPG Pooler resource.
+- Deployed separate read/write and read-only connection poolers.
+- Configured transaction-level connection pooling.
+- Used multiple PgBouncer instances for availability.
+- Reduced the number of direct connections reaching PostgreSQL through connection reuse.
+
+### **4. Never lose committed data**
+
+- Used **Barman Cloud** for PostgreSQL backup management.
+- Configured Amazon S3 as external backup storage.
+- Implemented periodic base backups.
+- Enabled continuous WAL archiving.
+- Enabled Point-in-Time Recovery (PITR) to restore the database to a specific timestamp.
+
+### **5. Alert before users notice**
+
+- Used **Prometheus** for collecting database and Kubernetes metrics.
+- Used **Grafana** for monitoring dashboards and visualization.
+- Integrated CloudNativePG metrics for database monitoring.
+- Planned alerts for replication lag, disk usage, connection exhaustion, and backup failures.
+- Used Alertmanager for notification management.
+
+### **6. Be secure by default**
+
+- Used Kubernetes Secrets to manage database credentials.
+- Planned NetworkPolicies to restrict unauthorized pod-to-database communication.
+- Implemented separate read/write database endpoints.
+- Used dedicated database roles instead of PostgreSQL superuser access.
+- Followed the principle of least privilege for application database access.
+
 ## 2. Architecture diagram
 
 
